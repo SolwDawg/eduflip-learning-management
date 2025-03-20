@@ -17,6 +17,7 @@ import courseRoutes from "./routes/courseRoutes";
 import userClerkRoutes from "./routes/userClerkRoutes";
 import enrollmentRoutes from "./routes/enrollmentRoutes";
 import userCourseProgressRoutes from "./routes/userCourseProgressRoutes";
+import categoryRoutes from "./routes/categoryRoutes";
 
 /* CONFIGURATIONS */
 dotenv.config();
@@ -48,6 +49,7 @@ app.use("/courses", courseRoutes);
 app.use("/users/clerk", requireAuth(), userClerkRoutes);
 app.use("/enrollments", requireAuth(), enrollmentRoutes);
 app.use("/users/course-progress", requireAuth(), userCourseProgressRoutes);
+app.use("/categories", categoryRoutes);
 
 /* SERVER */
 const port = process.env.PORT || 3000;
