@@ -18,6 +18,7 @@ import userClerkRoutes from "./routes/userClerkRoutes";
 import enrollmentRoutes from "./routes/enrollmentRoutes";
 import userCourseProgressRoutes from "./routes/userCourseProgressRoutes";
 import categoryRoutes from "./routes/categoryRoutes";
+import quizRoutes from "./routes/quizRoutes";
 import { specs, swaggerUi } from "./config/swagger";
 
 /* CONFIGURATIONS */
@@ -58,6 +59,7 @@ app.use("/users/clerk", requireAuth(), userClerkRoutes);
 app.use("/enrollments", requireAuth(), enrollmentRoutes);
 app.use("/users/course-progress", requireAuth(), userCourseProgressRoutes);
 app.use("/categories", categoryRoutes);
+app.use("/quizzes", quizRoutes);
 
 /* SERVER */
 const port = process.env.PORT || 3000;
