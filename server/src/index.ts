@@ -18,6 +18,7 @@ import userClerkRoutes from "./routes/userClerkRoutes";
 import enrollmentRoutes from "./routes/enrollmentRoutes";
 import userCourseProgressRoutes from "./routes/userCourseProgressRoutes";
 import categoryRoutes from "./routes/categoryRoutes";
+import { specs, swaggerUi } from "./config/swagger";
 
 /* CONFIGURATIONS */
 dotenv.config();
@@ -44,6 +45,13 @@ app.use(clerkMiddleware());
 app.get("/", (req, res) => {
   res.send("Hello World");
 });
+
+// Swagger documentation
+app.use(
+  "/api-docs",
+  swaggerUi.serve,
+  swaggerUi.setup(specs, { explorer: true })
+);
 
 app.use("/courses", courseRoutes);
 app.use("/users/clerk", requireAuth(), userClerkRoutes);
