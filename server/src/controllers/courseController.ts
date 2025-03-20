@@ -232,3 +232,76 @@ export const getUploadImageUrl = async (
       .json({ message: "Error generating image upload URL", error });
   }
 };
+
+export const getUploadDocumentUrl = async (
+  req: Request,
+  res: Response
+): Promise<void> => {
+  const { fileName, fileType } = req.body;
+  const { courseId } = req.params;
+
+  if (!fileName || !fileType) {
+    res.status(400).json({ message: "File name and type are required" });
+    return;
+  }
+
+  // Validate document type
+  const validFileTypes = [
+    "application/pdf",
+    "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+    "application/vnd.openxmlformats-officedocument.presentationml.presentation",
+    "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+  ];
+
+  if (!validFileTypes.includes(fileType)) {
+    res.status(400).json({
+      message:
+        "Invalid file type. Supported types are PDF, DOCX, PPT, and XLSX",
+    });
+    return;
+  }
+
+  try {
+    const uniqueId = uuidv4();
+    const s3Key = `documents/courses/${courseId}/${uniqueId}-${fileName}`;
+
+    const s3Params = {
+      Bucket: process.env.S3_BUCKET_NAME || "",
+      Key: s3Key,
+      Expires: 120, // Give more time for document uploads
+      ContentType: fileType,
+    };
+
+    const uploadUrl = s3.getSignedUrl("putObject", s3Params);
+    const documentUrl = `${process.env.CLOUDFRONT_DOMAIN}/${s3Key}`;
+
+    res.json({
+      message: "Document upload URL generated successfully",
+      data: {
+        uploadUrl,
+        documentUrl,
+        documentType: getDocumentType(fileType),
+      },
+    });
+  } catch (error) {
+    res
+      .status(500)
+      .json({ message: "Error generating document upload URL", error });
+  }
+};
+
+// Helper function to determine document type from MIME type
+function getDocumentType(mimeType: string): string {
+  switch (mimeType) {
+    case "application/vnd.openxmlformats-officedocument.wordprocessingml.document":
+      return "docx";
+    case "application/pdf":
+      return "pdf";
+    case "application/vnd.openxmlformats-officedocument.presentationml.presentation":
+      return "ppt";
+    case "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet":
+      return "xlsx";
+    default:
+      return "unknown";
+  }
+}

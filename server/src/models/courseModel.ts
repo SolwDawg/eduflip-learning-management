@@ -26,7 +26,7 @@ const chapterSchema = new Schema({
   },
   type: {
     type: String,
-    enum: ["Text", "Quiz", "Video"],
+    enum: ["Text", "Quiz", "Video", "Document"],
     required: true,
   },
   title: {
@@ -43,6 +43,13 @@ const chapterSchema = new Schema({
   },
   video: {
     type: String,
+  },
+  document: {
+    type: String,
+  },
+  documentType: {
+    type: String,
+    enum: ["docx", "pdf", "ppt", "xlsx"],
   },
 });
 
